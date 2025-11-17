@@ -4,3 +4,4 @@ nltk
 joblib
 streamlit
 datasets
+sentence-transformers
