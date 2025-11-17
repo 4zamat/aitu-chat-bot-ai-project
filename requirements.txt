@@ -6,3 +6,6 @@ streamlit
 datasets
 sentence-transformers
 google-generativeai
+tqdm
+streamlit
+python-dotenv

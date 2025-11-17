@@ -40,16 +40,23 @@ def find_best_match_sbert(user_question, question_embeddings, data_list):
     cos_scores = util.cos_sim(user_embedding, question_embeddings)[0]
     
     # Find top match using torch.topk
-    top_results = torch.topk(cos_scores, k=1)
+    K_VALUE = 3 
+    top_results = torch.topk(cos_scores, k=K_VALUE)
     
-    best_score = top_results[0].item()
-    best_match_index = top_results[1].item()
+    best_scores = top_results[0]
+    best_indices = top_results[1]
     
-    SIMILARITY_THRESHOLD = 0.5
+    SIMILARITY_THRESHOLD = 0.5 
     
-    if best_score > SIMILARITY_THRESHOLD:
-        # Return full context item (question + answer) for LLM, not just answer
-        found_item = data_list[best_match_index]
-        return found_item
+    found_items = []
+    for i in range(K_VALUE):
+        score = best_scores[i].item()
+        index = best_indices[i].item()
+        
+        if score > SIMILARITY_THRESHOLD:
+            found_items.append(data_list[index])
+            
+    if found_items:
+        return found_items  # Return list of context dictionaries
     else:
         return None
