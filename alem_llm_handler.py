@@ -80,19 +80,33 @@ def generate_llm_answer(user_question, found_contexts_list):
 
 def generate_fallback_answer(user_question):
     """
-    Fallback function when retrieval finds no relevant context.
-    Sends question to LLM without RAG context, using general knowledge.
+    Вызывается, когда SBERT-поиск ничего не нашел.
+    Теперь он НЕ отвечает на общие вопросы.
     """
+    
+    # --- НОВЫЙ "ЖЕСТКИЙ" FALLBACK-ПРОМПТ ---
     prompt_template = f"""
-    Ты — полезный ИИ-ассистент Astana IT University (AITU).
-    ... (весь ваш "fallback" промпт из llm_handler.py) ...
+    Ты — профессиональный ИИ-ассистент Astana IT University (AITU).
+    Твоя единственная задача — отвечать на вопросы, связанные с AITU.
+
+    ВАЖНО: Поиск по базе знаний AITU не дал результатов
+    по следующему вопросу пользователя.
+
+    ТВОЯ ЗАДАЧА:
+    1.  **НЕ ОТВЕЧАЙ** на "ВОПРОС ПОЛЬЗОВАТЕЛЯ" по существу.
+    2.  Вежливо сообщи, что ты специализируешься **только** на
+        вопросах о AITU и не можешь ответить на общие
+        темы (например, написание кода, погода, история и т.д.).
+    3.  Предложи пользователю переформулировать запрос или
+        задать вопрос, связанный с университетом.
 
     ---
     ВОПРОС ПОЛЬЗОВАТЕЛЯ:
     {user_question}
     ---
     
-    ОТВЕТ АССИСТЕНТА (С ПРЕДУПРЕЖДЕНИЕМ):
+    ОТВЕТ АССИСТЕНТА (Вежливый отказ):
     """
     
+    # 2. Отправляем в Alem API
     return _call_alem_api(prompt_template)

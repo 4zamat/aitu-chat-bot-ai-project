@@ -24,6 +24,5 @@ ENV/
 Thumbs.db
 
 # Project specific
-*.pkl
 *.joblib
 
